@@ -8,7 +8,7 @@ use crossterm::{
 };
 use invaders::{
     frame::{self, new_frame},
-    render::{self, render},
+    render::render,
 };
 use rusty_audio::Audio;
 
@@ -33,13 +33,13 @@ fn main() -> Result<(), Box<dyn Error>> {
     let render_handle = thread::spawn(move || {
         let mut last_frame = frame::new_frame();
         let mut stdout = io::stdout();
-        render::render(&mut stdout, &last_frame, &last_frame, true);
+        render(&mut stdout, &last_frame, &last_frame, true);
         loop {
             let curr_frame = match render_rx.recv() {
                 Ok(x) => x,
                 Err(_) => break,
             };
-            render::render(&mut stdout, &last_frame, &curr_frame, false);
+            render(&mut stdout, &last_frame, &curr_frame, false);
             last_frame = curr_frame;
         }
     });
@@ -64,7 +64,7 @@ fn main() -> Result<(), Box<dyn Error>> {
 
         // Draw & render
         let _ = render_tx.send(curr_frame);
-        thread::sleep(Duration::from_millis((1)));
+        thread::sleep(Duration::from_millis(1));
     }
 
     // Cleanup
